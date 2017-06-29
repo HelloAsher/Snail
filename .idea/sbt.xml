@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ScalaSbtSettings">
+    <option name="customLauncherEnabled" value="true" />
+    <option name="customLauncherPath" value="F:\Work\tools\sbt-0.13.13\sbt-launcher-packaging-0.13.13\bin\sbt-launch.jar" />
+    <option name="vmParameters" value="-Xmx1536M -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=128m -Dsbt.log.format=true -Dsbt.override.build.repos=true -Dfile.encoding=UTF8 -Dsbt.boot.directory=F:/Work/tools/sbt-0.13.13/sbt/boot -Dsbt.ivy.home=F:/Work/tools/sbt-0.13.13/sbt/ivy2 -Xss1M -XX:+CMSClassUnloadingEnabled" />
+  </component>
+</project>
