@@ -20,6 +20,6 @@ public class TestAPI {
 //        System.out.println(Runtime.getRuntime().freeMemory()/1024);
 //        System.out.println(Runtime.getRuntime().totalMemory()/1024);
 
-        System.out.println((byte)4);
+        System.out.println();
     }
 }
