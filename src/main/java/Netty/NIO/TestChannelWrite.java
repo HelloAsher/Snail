@@ -1,4 +1,4 @@
-package NIO;
+package Netty.NIO;
 
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
