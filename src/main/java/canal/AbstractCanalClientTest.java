@@ -270,39 +270,29 @@ public class AbstractCanalClientTest {
                     continue;
                 }
                 for (RowData rowData : rowChage.getRowDatasList()) {
+                    String sql = null;
                     if (eventType == EventType.DELETE) {
                         HashMap<String, String> row_ = this.getRowData(rowData.getBeforeColumnsList());
-                        System.out.println(row_);
-                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
-                        Statement statement = connection.createStatement();
-                        String sql = "delete from employee where id=" + row_.get("id");
-                        System.out.println(sql);
-                        statement.execute(sql);
-                        JDBCUtils.release(connection, statement, null);
+                        sql = String.format("delete from employee where id=%s", row_.get("id"));
                     } else if (eventType == EventType.INSERT) {
                         HashMap<String, String> row_ = this.getRowData(rowData.getAfterColumnsList());
-                        System.out.println(row_);
-                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
-                        Statement statement = connection.createStatement();
-                        String sql = String.format("insert into employee values(%s, '%s', %s)", row_.get("id"), row_.get("name"), row_.get("age"));
-                        System.out.println(sql);
-                        statement.execute(sql);
-                        JDBCUtils.release(connection, statement, null);
+                        sql = String.format("insert into employee values(%s, '%s', %s)", row_.get("id"), row_.get("name"), row_.get("age"));
                     } else if(eventType == EventType.UPDATE){
                         HashMap<String, String> row_ = this.getRowData(rowData.getAfterColumnsList());
-                        System.out.println(row_);
-                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
-                        Statement statement = connection.createStatement();
-                        String sql = String.format("update employee set name='%s', age=%s where id=%s", row_.get("name"), row_.get("age"), row_.get("id"));
-                        System.out.println(sql);
-                        statement.execute(sql);
-                        JDBCUtils.release(connection, statement, null);
+                        sql = String.format("update employee set name='%s', age=%s where id=%s", row_.get("name"), row_.get("age"), row_.get("id"));
                     }
+                    this.writeToTargetDb(sql);
                 }
             }
         }
     }
 
+    protected void writeToTargetDb(String sql) throws Exception{
+        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
+        Statement statement = connection.createStatement();
+        statement.execute(sql);
+        JDBCUtils.release(connection, statement, null);
+    }
 
     protected HashMap<String, String> getRowData(List<Column> columns){
         HashMap<String, String> dict = new HashMap<>();
