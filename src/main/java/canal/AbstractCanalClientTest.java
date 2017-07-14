@@ -276,6 +276,7 @@ public class AbstractCanalClientTest {
                         Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
                         Statement statement = connection.createStatement();
                         String sql = "delete from employee where id=" + row_.get("id");
+                        System.out.println(sql);
                         statement.execute(sql);
                         JDBCUtils.release(connection, statement, null);
                     } else if (eventType == EventType.INSERT) {
