@@ -1,7 +1,10 @@
 package canal;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
@@ -22,6 +25,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry.TransactionBegin;
 import com.alibaba.otter.canal.protocol.CanalEntry.TransactionEnd;
 import com.alibaba.otter.canal.protocol.Message;
 import com.google.protobuf.InvalidProtocolBufferException;
+import utils.JDBCUtils;
 
 /**
  * 测试基类
@@ -120,6 +124,7 @@ public class AbstractCanalClientTest {
                         // }
                     } else {
                         printSummary(message, batchId, size);
+                        syncToAnother(message.getEntries());
                         printEntry(message.getEntries());
                     }
 
@@ -248,6 +253,62 @@ public class AbstractCanalClientTest {
 
     public void setConnector(CanalConnector connector) {
         this.connector = connector;
+    }
+
+    public void syncToAnother(List<Entry> entries) throws Exception{
+        for(Entry entry : entries){
+            if(entry.getEntryType() == EntryType.ROWDATA){
+                RowChange rowChage = null;
+                try {
+                    rowChage = RowChange.parseFrom(entry.getStoreValue());
+                } catch (Exception e) {
+                    throw new RuntimeException("parse event has an error , data:" + entry.toString(), e);
+                }
+                EventType eventType = rowChage.getEventType();
+                if (eventType == EventType.QUERY || rowChage.getIsDdl()) {
+                    logger.info(" sql ----> " + rowChage.getSql() + SEP);
+                    continue;
+                }
+                for (RowData rowData : rowChage.getRowDatasList()) {
+                    if (eventType == EventType.DELETE) {
+                        HashMap<String, String> row_ = this.getRowData(rowData.getBeforeColumnsList());
+                        System.out.println(row_);
+                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
+                        Statement statement = connection.createStatement();
+                        String sql = "delete from employee where id=" + row_.get("id");
+                        statement.execute(sql);
+                        JDBCUtils.release(connection, statement, null);
+                    } else if (eventType == EventType.INSERT) {
+                        HashMap<String, String> row_ = this.getRowData(rowData.getAfterColumnsList());
+                        System.out.println(row_);
+                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
+                        Statement statement = connection.createStatement();
+                        String sql = String.format("insert into employee values(%s, '%s', %s)", row_.get("id"), row_.get("name"), row_.get("age"));
+                        System.out.println(sql);
+                        statement.execute(sql);
+                        JDBCUtils.release(connection, statement, null);
+                    } else if(eventType == EventType.UPDATE){
+                        HashMap<String, String> row_ = this.getRowData(rowData.getAfterColumnsList());
+                        System.out.println(row_);
+                        Connection connection = JDBCUtils.getConnection("192.168.229.129", 3306, "a", "root", "root");
+                        Statement statement = connection.createStatement();
+                        String sql = String.format("update employee set name='%s', age=%s where id=%s", row_.get("name"), row_.get("age"), row_.get("id"));
+                        System.out.println(sql);
+                        statement.execute(sql);
+                        JDBCUtils.release(connection, statement, null);
+                    }
+                }
+            }
+        }
+    }
+
+
+    protected HashMap<String, String> getRowData(List<Column> columns){
+        HashMap<String, String> dict = new HashMap<>();
+        for (Column column : columns) {
+            dict.put(column.getName(), column.getValue());
+        }
+        return dict;
     }
 
 }
