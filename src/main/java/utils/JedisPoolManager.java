@@ -3,6 +3,7 @@ package utils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.ShardedJedisPool;
 
 /**
  * Created by yzbfl on 2017-07-17.
