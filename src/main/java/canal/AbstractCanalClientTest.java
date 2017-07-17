@@ -282,6 +282,7 @@ public class AbstractCanalClientTest {
                         sql = String.format("update employee set name='%s', age=%s where id=%s", row_.get("name"), row_.get("age"), row_.get("id"));
                     }
                     if (sql != null) {
+                        System.out.println("执行的SQL语句: " + sql);
                         this.writeToTargetDb(sql);
                     }
                 }
