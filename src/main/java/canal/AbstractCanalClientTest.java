@@ -281,7 +281,9 @@ public class AbstractCanalClientTest {
                         HashMap<String, String> row_ = this.getRowData(rowData.getAfterColumnsList());
                         sql = String.format("update employee set name='%s', age=%s where id=%s", row_.get("name"), row_.get("age"), row_.get("id"));
                     }
-                    this.writeToTargetDb(sql);
+                    if (sql != null) {
+                        this.writeToTargetDb(sql);
+                    }
                 }
             }
         }
