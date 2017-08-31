@@ -16,7 +16,7 @@ public class JedisPoolManager {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(8);
         poolConfig.setMaxIdle(4);
-        this.pool = new JedisPool(poolConfig, "172.18.xxx.xxx", 6379);
+        this.pool = new JedisPool(poolConfig, "172.18.82.252", 6379);
     }
 
     public static JedisPoolManager getInstance(){
