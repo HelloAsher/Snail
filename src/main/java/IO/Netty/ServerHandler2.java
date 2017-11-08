@@ -8,23 +8,17 @@ import io.netty.channel.ChannelHandlerContext;
 /**
  * Created by SCAL on 2017/6/29.
  */
-public class ServerHandler extends ChannelHandlerAdapter{
+public class ServerHandler2 extends ChannelHandlerAdapter{
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf byteBuf = (ByteBuf) msg;
         byte[] data = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(data);
         String massage = new String(data, "utf-8");
-        System.out.println("server received a message: " + massage);
+        System.out.println("server received a 222message: " + massage);
 
         String response = "this is response to client!";
-        ctx.fireChannelRead(byteBuf.writeBytes("kkk".getBytes()));
         ctx.writeAndFlush(Unpooled.copiedBuffer(response.getBytes()));
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.flush();
     }
 
     @Override

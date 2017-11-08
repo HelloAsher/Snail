@@ -24,6 +24,7 @@ public class Server {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new ServerHandler());
+                        ch.pipeline().addLast(new ServerHandler2());
                         System.out.println("channel inited!");
                     }
                 });
